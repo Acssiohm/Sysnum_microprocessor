@@ -1,0 +1,45 @@
+################################################################################
+######################      MULTIPLEXER         ################################
+################################################################################
+
+from lib_carotte import *
+from typing import *
+
+from log_unit import n_and, clone
+
+def bit_mux(sel, inp):
+    ''' 1-bit multiplexer '''
+    assert sel.bus_size == 1
+    n = inp.bus_size
+    return [ n_and(clone(n,~sel), inp) ] + [ n_and(clone(n,sel), inp) ] 
+
+def mux(sel, inp):
+    ''' n-bit multiplexer '''
+    n = sel.bus_size
+    if n == 1 :
+        return bit_mux(sel, inp)
+    first_res = bit_mux(sel[0], inp)
+    branch0 = first_res[0]
+    branch1 = first_res[1]
+    rest_sel = sel[1:]
+    return mux(rest_sel, branch0) + mux(rest_sel, branch1)
+
+def main() :
+    sel = Input(3)
+    inp = Input(3)
+    l = mux(sel, inp)
+    for i in range(len(l)):
+        l[i].set_as_output("r_"+str(i))
+
+# Exemple
+# Step 1 :
+# sel ? 5
+# inp ? 0b101
+# => r_0 = 0 (0b000)
+# => r_1 = 0 (0b000)
+# => r_2 = 0 (0b000)
+# => r_3 = 0 (0b000)
+# => r_4 = 0 (0b000)
+# => r_5 = 5 (0b101)
+# => r_6 = 0 (0b000)
+# => r_7 = 0 (0b000)
