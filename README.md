@@ -27,5 +27,6 @@ Par défaut, les chemins sont correct si ces trois dossiers sont côte à côte.
 - carotte.py
 - Sysnum_microprocessor
 - Netlist_simulator
+
 avec le fichier carotte.py dans le dossier carotte.py et le fichier netlist_simulator.byte dans le dossier Netlist_simulator. 
 Si ce n'est pas le cas, vous pouvez regarder les 3 premières lignes du fichier Makefile et les mettre à jour. 
