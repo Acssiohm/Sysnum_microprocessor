@@ -1,0 +1,76 @@
+################################################################################
+###############        ARITHMETIC AND LOGIC UNIT         #######################
+################################################################################
+
+
+from lib_carotte import *
+from typing import *
+
+from arith_unit import arith_unit
+from log_unit import n_and, n_or, n_not, n_xor
+# from mux import mux
+from demux import demux
+
+# opérations actuelles ( va sûrement changer ! )
+# 0 -> add
+# 1 -> sub
+# 2 -> and
+# 3 -> or
+# 4 -> not b
+# 5 -> xor
+# 6,7 -> 0 
+def alu(a, b, op):
+    assert a.bus_size == b.bus_size
+    assert op.bus_size == 3
+    n = a.bus_size
+    add_sub, overflow = arith_unit(a,b,op[0]) 
+    and_or  = demux(op[0], n_and(a,b)+n_or(a,b))
+    not_xor = demux(op[0], n_not(b)+n_xor(a,b))
+    zero_zero = Constant(n*"0")
+    return demux(op[2] + op[1], add_sub+and_or+not_xor+zero_zero)
+
+def main() -> None:
+    '''Entry point of this example'''
+    n = 8
+    a = Input(n)
+    b = Input(n)
+    op = Input(3)
+    alu(a, b, op).set_as_output("r")
+
+# Exemples:
+
+# add :
+# a ? 120
+# b ? 35
+# op ? 0
+# => r = 155 (0b10011011)
+
+# sub :
+# a ? 120
+# b ? 30
+# op ? 1
+# => r = 90 (0b01011010)
+
+# and :
+# a ? 0b11001100
+# b ? 0b10101001
+# op ? 2
+# => r = 136 (0b10001000)
+
+# or :
+# a ? 0b11001100
+# b ? 0b10101001
+# op ? 3
+# => r = 237 (0b11101101)
+
+# not :
+# a ? 0b11001100 
+# b ? 0b10101001
+# op ? 4
+# => r = 86 (0b01010110)
+
+# xor :
+# a ? 0b11001100
+# b ? 0b10101001
+# op ? 5
+# => r = 101 (0b01100101)
